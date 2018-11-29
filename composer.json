@@ -1,0 +1,29 @@
+{
+    "name": "kbigbus/swoole-link-monitor",
+    "description": "基于swoole的链路监控服务",
+    "keywords": ["swoole", "link", "monitor", "链路监控"],
+    "homepage": "https://github.com/kbigbus/swoole-link-monitor",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0",
+        "ext-swoole": ">=1.8.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8.35 || ^5.7"
+    },
+    "authors": [
+        {
+            "name": "kbigbus",
+            "email": "524894243@qq.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "LinkMonitor\\": "src"
+        }
+    },
+    "bin": [
+        "link-monitor"
+    ]
+    
+}
