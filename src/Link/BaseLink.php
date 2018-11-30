@@ -8,12 +8,15 @@
 
 namespace LinkMonitor\Link;
 
+use LinkMonitor\Helper\Logs;
+
 class BaseLink
 {
-    const LINK_TYPE_MQ    = 'mq';
-    const LINK_TYPE_REDIS = 'redis';
+    protected $logger = [];
 
-    protected $linkSetting = [];
+    public function __construct($link, Logs $logger)
+    {
+    }
 
     /**
      * 检查链路链接是否成功

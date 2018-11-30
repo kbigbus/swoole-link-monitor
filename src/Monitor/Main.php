@@ -11,7 +11,8 @@ namespace LinkMonitor\Monitor;
 use LinkMonitor\Helper\Errors;
 use LinkMonitor\Helper\Logs;
 use LinkMonitor\Helper\Utils;
-use LinkMonitor\Link\BaseLink;
+use LinkMonitor\Link\FactoryLink;
+use LinkMonitor\Notice\BaseNotice;
 
 class Main
 {
@@ -57,25 +58,42 @@ class Main
             $mod          = 2 | \swoole_process::IPC_NOWAIT; //这里设置消息队列为非阻塞模式
 
             $workers = [];
+            $factoryLink = new FactoryLink();
+            $factoryLink->getConfig($this->config);
+            $baseNotice = new BaseNotice();
+            $baseNotice->getConfig($this->config);
             for ($i=0; $i < $this->config['workerNum']; $i++) {
                 //开启子进程检查链路
-                $process = new \swoole_process(function ($worker) {
+                $process = new \swoole_process(function ($worker) use ($factoryLink) {
                     $pid = $worker->pid;
                     $this->logger->log('Worker Start, PID=' . $pid);
-                    echo 'Worker Start, PID=' . $pid . PHP_EOL;
+                    //echo 'Worker Start, PID=' . $pid . PHP_EOL;
                     while ($recv = $worker->pop()) {
-                        //获取队列内容
-                        $linkSetting = json_encode($recv, true);
-                        switch ($linkSetting['linkType']) {
-                            case BaseLink::LINK_TYPE_MQ:
-
-                            break;
+                        //获取队列内容 获取 链路对象
+                        $linkSetting = json_decode($recv, true);
+                        $linkObject = $factoryLink->getLinkObject($linkSetting);
+                        if ($linkObject) {
+                            if (!isset($linkSetting['checkList'])) {
+                                //不存在则只检查连接
+                                $connectRet = $linkObject->checkConnection();
+                            } else {
+                                //检查链接
+                                if (in_array(1, $linkSetting['checkList'])) {
+                                    $connectRet = $linkObject->checkConnection();
+                                }
+                                //检查操作
+                                if (in_array(2, $linkSetting['checkList'])) {
+                                    $operateRet = $linkObject->checkConnection();
+                                }
+                            }
+                        } else {
+                            $this->logger->log('get link object failed,linkSetting:' . json_encode($linkSetting), 'info', Logs::LEVEL_ERROR);
                         }
-                        echo 'recv =' . $recv . PHP_EOL;
+                        //echo 'recv =' . $recv . PHP_EOL;
                         //$this->logger->log('recv =' . $recv . PHP_EOL);
                     }
                     //$this->logger->log('Worker Exit, PID=' . $pid);
-                    echo 'Worker Exit, PID=' . $pid . PHP_EOL;
+                    //echo 'Worker Exit, PID=' . $pid . PHP_EOL;
                     $worker->exit(0);
                 }, false, false);
                 $process->useQueue($customMsgKey, $mod);
@@ -89,7 +107,7 @@ class Main
                 $workerIndex = $key % $countWorkers;
                 $pid = $workers[$workerIndex][0];
                 $process = $workers[$workerIndex][1];
-                echo json_encode($link) . ' pid：' . $pid . PHP_EOL;
+                //echo json_encode($link) . ' pid：' . $pid . PHP_EOL;
                 $process->push(json_encode($link));
             }
             //执行完成  删除队列

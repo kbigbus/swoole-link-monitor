@@ -10,10 +10,11 @@
 return [
     [
         'linkType'       => 'mq', //链路资源类型
+        'checkList'      => [1, 2], //检查列表 1检查链接  2检查操作
         'noticeType'     => 1, //通知类型
         'timeLimit'      => 3, //链接告警时间
         'connectSetting' => [
-            'host'    => '192.168.9.24',
+            'host'    => '192.168.10.214',
             'user'    => 'mqadmin',
             'pass'    => 'mqadmin',
             'port'    => '5672',

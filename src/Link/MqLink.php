@@ -15,7 +15,6 @@ class MqLink extends BaseLink
 {
     public $connection              = false; //链接对象成员
     protected static $staticConnect = []; //静态资源
-    private $logger                 =null;
 
     public function __construct($link, Logs $logger)
     {
@@ -27,9 +26,10 @@ class MqLink extends BaseLink
             return false;
         }
 
-        $this->$connection = $this->getConnection();
+        $this->connection = $this->getConnection();
     }
 
+    //单例模式获取链接对象
     public function getConnection()
     {
         $linkSetting = $this->linkSetting['connectSetting'];
