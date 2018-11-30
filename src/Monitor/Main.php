@@ -8,7 +8,10 @@
 
 namespace LinkMonitor\Monitor;
 
+use LinkMonitor\Helper\Errors;
 use LinkMonitor\Helper\Logs;
+use LinkMonitor\Helper\Utils;
+use LinkMonitor\Link\BaseLink;
 
 class Main
 {
@@ -33,33 +36,49 @@ class Main
     //启动
     public function start()
     {
-        // try {
-        //TODO 监听信号
+        try {
+            //TODO 监听信号
 
-        //添加时间监听
-        $this->addTimeListener();
-        // } catch (\Exception $ex) {
-        // }
+            //添加时间监听
+            $this->addTimeListener();
+        } catch (\Exception $ex) {
+            Utils::catchError($this->logger, $ex);
+        }
     }
 
     //定时监听
     public function addTimeListener()
     {
         if ((int) $this->config['tickerTime'] <= 0 || !$this->config['linkList'] || !$this->config['workerNum']) {
-            throw new \Exception('wrong ticker time or link setting');
+            throw new \Exception(Errors::SETTING_ERROR_MESSAGE, Errors::SETTING_ERROR_CODE);
         }
         \swoole_timer_tick($this->config['tickerTime'] * 1000, function () {
+            $customMsgKey = 1;
+            $mod          = 2 | \swoole_process::IPC_NOWAIT; //这里设置消息队列为非阻塞模式
+
             $workers = [];
             for ($i=0; $i < $this->config['workerNum']; $i++) {
                 //开启子进程检查链路
                 $process = new \swoole_process(function ($worker) {
+                    $pid = $worker->pid;
+                    $this->logger->log('Worker Start, PID=' . $pid);
+                    echo 'Worker Start, PID=' . $pid . PHP_EOL;
                     while ($recv = $worker->pop()) {
                         //获取队列内容
-                        $this->logger->log('recv =' . $recv . PHP_EOL);
+                        $linkSetting = json_encode($recv, true);
+                        switch ($linkSetting['linkType']) {
+                            case BaseLink::LINK_TYPE_MQ:
+
+                            break;
+                        }
+                        echo 'recv =' . $recv . PHP_EOL;
+                        //$this->logger->log('recv =' . $recv . PHP_EOL);
                     }
+                    //$this->logger->log('Worker Exit, PID=' . $pid);
+                    echo 'Worker Exit, PID=' . $pid . PHP_EOL;
                     $worker->exit(0);
                 }, false, false);
-                $process->useQueue();
+                $process->useQueue($customMsgKey, $mod);
                 $pid           = $process->start();
                 $workers[] = [$pid, $process];
             }
@@ -70,15 +89,12 @@ class Main
                 $workerIndex = $key % $countWorkers;
                 $pid = $workers[$workerIndex][0];
                 $process = $workers[$workerIndex][1];
-                $process->push('worker:' . $pid);
-                usleep(300); //异步并发  必须sleep 等callback执行完成后在kill
+                echo json_encode($link) . ' pid：' . $pid . PHP_EOL;
+                $process->push(json_encode($link));
             }
             //执行完成  删除队列
-            foreach ($workers as $key=>$worker) {
-                $pid = $worker[0];
-                \swoole_process::kill($pid);
-                unset($workers[$key]);
-                $this->logger->log('Worker Exit, PID=' . $pid . PHP_EOL);
+            foreach ($workers as $worker) {
+                \swoole_process::wait();
             }
         });
     }

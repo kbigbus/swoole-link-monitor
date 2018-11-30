@@ -6,7 +6,9 @@
     "license": "MIT",
     "require": {
         "php": ">=7.0",
-        "ext-swoole": ">=1.9.18"
+        "ext-swoole": ">=1.9.18",
+        "ext-redis": "*",
+        "ext-amqp": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8.35 || ^5.7"
