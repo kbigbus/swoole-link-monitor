@@ -9,6 +9,7 @@
 namespace LinkMonitor\Link;
 
 use LinkMonitor\Helper\Logs;
+use LinkMonitor\Helper\Utils;
 
 class MqLink extends BaseLink
 {
