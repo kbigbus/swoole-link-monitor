@@ -12,7 +12,7 @@ use LinkMonitor\Helper\Errors;
 use LinkMonitor\Helper\Logs;
 use LinkMonitor\Helper\Utils;
 use LinkMonitor\Link\FactoryLink;
-use LinkMonitor\Notice\BaseNotice;
+use LinkMonitor\Notice\FactoryNotice;
 
 class Main
 {
@@ -60,11 +60,11 @@ class Main
             $workers = [];
             $factoryLink = new FactoryLink();
             $factoryLink->getConfig($this->config);
-            $baseNotice = new BaseNotice();
-            $baseNotice->getConfig($this->config);
+            $factoryNotice = new FactoryNotice();
+            $factoryNotice->getConfig($this->config);
             for ($i=0; $i < $this->config['workerNum']; $i++) {
                 //开启子进程检查链路
-                $process = new \swoole_process(function ($worker) use ($factoryLink) {
+                $process = new \swoole_process(function ($worker) use ($factoryLink, $factoryNotice) {
                     $pid = $worker->pid;
                     $this->logger->log('Worker Start, PID=' . $pid);
                     //echo 'Worker Start, PID=' . $pid . PHP_EOL;
@@ -80,10 +80,18 @@ class Main
                                 //检查链接
                                 if (in_array(1, $linkSetting['checkList'])) {
                                     $connectRet = $linkObject->checkConnection();
+                                } else {
+                                    $connectRet = true;
                                 }
                                 //检查操作
-                                if (in_array(2, $linkSetting['checkList'])) {
-                                    $operateRet = $linkObject->checkConnection();
+                                if ($connectRet) {
+                                    if (in_array(2, $linkSetting['checkList'])) {
+                                        $operateRet = $linkObject->checkConnection();
+                                    }
+                                } else {
+                                    $noticeObject = $factoryNotice->getNoticeObject($linkSetting);
+                                    $noticeObject->setContent('这是个测试告警，配置信息：' . json_encode($linkSetting));
+                                    $noticeObject->send();
                                 }
                             }
                         } else {

@@ -22,7 +22,15 @@ class BaseNotice
     {
     }
 
-    public function send($msg)
+    public function setContentType($type)
+    {
+    }
+
+    public function setContent($content)
+    {
+    }
+
+    public function send()
     {
     }
 }

@@ -21,6 +21,13 @@ return [
             'vhost'   => 'php',
             'topic'   => 'test', //测试的队列名称
         ],
+        'dingdingSetting' => [//钉钉提醒配置
+            'access_token' => 'xxx',
+            'atMobiles'    => [],
+            'isAtAll'      => false,
+        ],
+        'emailSetting'  => [//邮件提醒配置
+        ],
     ],
     [
         'type'      => 'api2', //链路资源类型

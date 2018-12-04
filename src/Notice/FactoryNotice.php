@@ -19,9 +19,9 @@ class FactoryNotice
 
     protected $logger = [];
 
-    protected $dingdingToken = [];
-    protected $emailSetting  = [];
-    protected $noticeType    = 1;
+    protected $dingdingSetting = [];
+    protected $emailSetting    = [];
+    protected $noticeType      = 1;
 
     /**
      * 获取配置项.
@@ -32,7 +32,7 @@ class FactoryNotice
     {
         !$this->logger && $this->logger = Logs::getLogger($config['logPath'] ?? '');
         $this->noticeType               = $config['noticeType'] ?? 1; //获取全局告警配置
-        $this->dingdingToken            = $config['dingdingToken'] ?? []; //获取全局钉钉配置
+        $this->dingdingSetting          = $config['dingdingSetting'] ?? []; //获取全局钉钉配置
         $this->emailSetting             = $config['emailSetting'] ?? []; //获取全局邮件配置
     }
 
@@ -50,8 +50,8 @@ class FactoryNotice
         if (isset($noticeConfig['noticeType'])) {
             $this->noticeType = $noticeConfig['noticeType'];
         }
-        if (isset($noticeConfig['dingdingToken'])) {
-            $this->dingdingToken = $noticeConfig['dingdingToken'];
+        if (isset($noticeConfig['dingdingSetting'])) {
+            $this->dingdingSetting = $noticeConfig['dingdingSetting'];
         }
         if (isset($noticeConfig['emailSetting'])) {
             $this->emailSetting = $noticeConfig['emailSetting'];
@@ -59,15 +59,15 @@ class FactoryNotice
         $retObj = false;
         switch ($this->noticeType) {
             case self::NOTICE_TYPE_DINGDING://钉钉提醒
-                if ($this->dingdingToken) {
+                if ($this->dingdingSetting) {
                     //调用钉钉接口推送
                     $retObj = $this->getInstanceObj();
                     if ($retObj) {
-                        $retObj->setToken($this->dingdingToken);
+                        $retObj->setToken($this->dingdingSetting);
                     }
                 } else {
                     //不存在配置
-                    $this->logger->log('has no dingding token setting, noticeConfig:' . json_encode($noticeConfig), 'info', Logs::LEVEL_ERROR);
+                    $this->logger->log('has no dingding setting, noticeConfig:' . json_encode($noticeConfig), 'info', Logs::LEVEL_ERROR);
                 }
             break;
             case self::NOTICE_TYPE_EMAIL://邮件提醒
