@@ -11,7 +11,7 @@ return [
     [
         'linkType'       => 'mq', //链路资源类型
         'checkList'      => [1, 2], //检查列表 1检查链接  2检查操作
-        'noticeType'     => 1, //通知类型
+        'noticeType'     => 2, //通知类型
         'timeLimit'      => 3, //链接告警时间
         'connectSetting' => [
             'host'    => '192.168.10.214',
@@ -27,6 +27,14 @@ return [
             'isAtAll'      => false,
         ],
         'emailSetting'  => [//邮件提醒配置
+            'smtp' => [
+                'smtpserver' => 'xxx', //邮件服务器地址
+                'smtpport'   => 25, //邮件服务器端口
+                'smtpuser'   => 'ixxx', //邮件服务器账号
+                'smtppass'   => 'xxx', //邮件服务器密码
+                'logfile'    => '/xxx/xxx/xxx', //邮件发送日志文件路径 可为空
+            ],
+            'mailto' => 'xxx', //接收告警的邮箱 多个以逗号隔开
         ],
     ],
     [

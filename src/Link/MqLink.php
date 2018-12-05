@@ -75,7 +75,17 @@ class MqLink extends BaseLink
      */
     public function checkConnection(): bool
     {
-        return $this->connection ? true : false;
+        if (!$this->connection) {
+            $linkSetting     = $this->linkSetting['connectSetting'];
+            $this->noticeMsg = '链路连接异常' . PHP_EOL
+            . '类型：' . $this->linkSetting['linkType'] . PHP_EOL
+            . '主机：' . $linkSetting['host'] . PHP_EOL
+            . '端口：' . $linkSetting['port'] . PHP_EOL;
+
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -90,7 +90,7 @@ class Main
                                     }
                                 } else {
                                     $noticeObject = $factoryNotice->getNoticeObject($linkSetting);
-                                    $noticeObject->setContent('这是个测试告警，配置信息：' . json_encode($linkSetting));
+                                    $noticeObject->setContent($linkObject->noticeMsg);
                                     $noticeObject->send();
                                 }
                             }

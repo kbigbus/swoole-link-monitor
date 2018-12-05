@@ -12,6 +12,7 @@ use LinkMonitor\Helper\Logs;
 
 class BaseLink
 {
+    public $noticeMsg = ''; //检查链路失败的告警信息
     protected $logger = [];
 
     public function __construct($link, Logs $logger)

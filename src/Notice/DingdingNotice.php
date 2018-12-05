@@ -80,7 +80,7 @@ class DingdingNotice extends BaseNotice
             $body = ['errcode'=>Errors::DINGDING_SEND_RETURN_ERROR_CODE, 'errmsg'=>$e->getMessage()];
         }
 
-        $this->logger->log('[钉钉接口]请求自定义机器人消息接口,请求地址：' . json_encode($apiUrl) . ',请求参数:' . json_encode($message) . ',返回结果:' . $body . '  httpcode: ' . $httpCode, 'info');
+        $this->logger->log('[告警服务]请求自定义机器人消息接口,请求地址：' . json_encode($apiUrl) . ',请求参数:' . json_encode($message) . ',返回结果:' . json_encode($body) . '  httpcode: ' . $httpCode, 'info');
 
         return $body;
     }
