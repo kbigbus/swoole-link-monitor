@@ -82,6 +82,28 @@ class Logs
     }
 
     /**
+     * 写入日志抽离  错误日志.
+     *
+     * @param string $message
+     * @param bool   $flush
+     */
+    public function errorLog($message, $flush = true)
+    {
+        $this->log($message, self::LEVEL_INFO, self::LEVEL_ERROR, $flush);
+    }
+
+    /**
+     * 写入日志抽离  应用日志.
+     *
+     * @param string $message
+     * @param bool   $flush
+     */
+    public function applicationLog($message, $flush = true)
+    {
+        $this->log($message, self::LEVEL_INFO, '', $flush);
+    }
+
+    /**
      * 日志分类处理.
      *
      * @param mixed $message

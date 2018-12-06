@@ -31,7 +31,7 @@ class Utils
         $error .= '错误信息：' . $exception->getMessage() . PHP_EOL;
         $error .= '错误堆栈：' . $exception->getTraceAsString() . PHP_EOL;
 
-        $logger && $logger->log($error, 'error', 'error');
+        $logger && $logger->errorLog($error);
     }
 
     public static function getMillisecond()

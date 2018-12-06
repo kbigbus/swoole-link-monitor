@@ -63,15 +63,15 @@ class DingdingNotice extends BaseNotice
             return ['errcode'=>Errors::DINGDING_SEND_SETTING_ERROR_CODE, 'errmsg'=>Errors::DINGDING_SEND_SETTING_ERROR_MESSAGE];
         }
         try {
-            $message      = [
+            $message = [
                 'msgtype' => $this->contentType,
                 'text'    => ['content' => $this->content], 'at' => ['atMobiles' => $this->atMobiles, 'isAtAll' => $this->isAtAll],
             ];
-            $apiUrl       = 'https://oapi.dingtalk.com/robot/send?access_token=' . $this->token;
-            $client       = new \GuzzleHttp\Client();
-            $res          = $client->request('POST', $apiUrl, ['json' => $message, 'timeout' => 5]);
-            $httpCode     =$res->getStatusCode();
-            $body         =$res->getBody();
+            $apiUrl   = 'https://oapi.dingtalk.com/robot/send?access_token=' . $this->token;
+            $client   = new \GuzzleHttp\Client();
+            $res      = $client->request('POST', $apiUrl, ['json' => $message, 'timeout' => 5]);
+            $httpCode = $res->getStatusCode();
+            $body     = $res->getBody();
         } catch (\Throwable $e) {
             Utils::catchError($this->logger, $e);
             $body = ['errcode'=>Errors::DINGDING_SEND_RETURN_ERROR_CODE, 'errmsg'=>$e->getMessage()];
@@ -80,7 +80,7 @@ class DingdingNotice extends BaseNotice
             $body = ['errcode'=>Errors::DINGDING_SEND_RETURN_ERROR_CODE, 'errmsg'=>$e->getMessage()];
         }
 
-        $this->logger->log('[告警服务]请求自定义机器人消息接口,请求地址：' . json_encode($apiUrl) . ',请求参数:' . json_encode($message) . ',返回结果:' . json_encode($body) . '  httpcode: ' . $httpCode, 'info');
+        $this->logger->applicationLog('[告警服务]请求自定义机器人消息接口,请求地址：' . json_encode($apiUrl) . ',请求参数:' . json_encode($message) . ',返回结果:' . json_encode($body) . '  httpcode: ' . $httpCode);
 
         return $body;
     }

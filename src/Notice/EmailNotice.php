@@ -109,7 +109,7 @@ class EmailNotice extends BaseNotice
             $body = ['errcode'=>Errors::EMAIL_SEND_RETURN_ERROR_CODE, 'errmsg'=>$e->getMessage()];
         }
 
-        $this->logger->log('[告警服务]请求邮件发送告警,告警人：' . json_encode($this->mailTo) . ',告警内容:' . json_encode($this->content) . ',返回结果:' . json_encode($body), 'info');
+        $this->logger->applicationLog('[告警服务]请求邮件发送告警,告警人：' . json_encode($this->mailTo) . ',告警内容:' . json_encode($this->content) . ',返回结果:' . json_encode($body));
 
         return $body;
     }

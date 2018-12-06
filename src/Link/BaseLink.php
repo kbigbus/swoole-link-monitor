@@ -12,10 +12,21 @@ use LinkMonitor\Helper\Logs;
 
 class BaseLink
 {
-    public $noticeMsg = ''; //检查链路失败的告警信息
-    protected $logger = [];
+    const CHECK_TYPE_CONNECTION = 1; //检查链接
+    const CHECK_TYPE_OPERATION  = 2; //检查操作
 
-    public function __construct($link, Logs $logger)
+    public $memoryTable         = null;
+    public $noticeMsg           = ''; //检查链路失败的告警信息
+    protected $logger           = [];
+
+    /**
+     * 初始化.
+     *
+     * @param array  $link        链路配置
+     * @param object $memoryTable 共享内存对象
+     * @param object $logger      日志对象
+     */
+    public function __construct($link, $memoryTable, Logs $logger)
     {
     }
 

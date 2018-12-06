@@ -34,9 +34,10 @@ class FactoryLink
     /**
      * 获取链路对象
      *
-     * @param array $linkSetting
+     * @param array  $linkSetting
+     * @param object $memoryTable
      */
-    public function getLinkObject($linkSetting)
+    public function getLinkObject($linkSetting, $memoryTable)
     {
         if (!$linkSetting || !isset($linkSetting['linkType']) || !$linkSetting['linkType']) {
             return false;
@@ -47,7 +48,7 @@ class FactoryLink
         }
         switch ($linkSetting['linkType']) {
             case self::LINK_TYPE_MQ:
-                self::$linkObject[$linkKey] = new MqLink($linkSetting, $this->logger);
+                self::$linkObject[$linkKey] = new MqLink($linkSetting, $memoryTable, $this->logger);
                 break;
 
             default:

@@ -67,7 +67,7 @@ class FactoryNotice
                     }
                 } else {
                     //不存在配置
-                    $this->logger->log('has no dingding setting, noticeConfig:' . json_encode($noticeConfig), 'info', Logs::LEVEL_ERROR);
+                    $this->logger->errorLog('has no dingding setting, noticeConfig:' . json_encode($noticeConfig));
                 }
             break;
             case self::NOTICE_TYPE_EMAIL://邮件提醒
@@ -79,7 +79,7 @@ class FactoryNotice
                     }
                 } else {
                     //不存在配置
-                    $this->logger->log('has no email setting, noticeConfig:' . json_encode($noticeConfig), 'info', Logs::LEVEL_ERROR);
+                    $this->logger->errorLog('has no email setting, noticeConfig:' . json_encode($noticeConfig));
                 }
 
             break;
