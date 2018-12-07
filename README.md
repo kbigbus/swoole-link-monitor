@@ -21,10 +21,11 @@
 待完善
 
 ## 安装方式
-
-> git clone https://github.com/kbigbus/swoole-link-monitor
-> cd swoole-link-monitor
-> composer install
+```
+git clone https://github.com/kbigbus/swoole-link-monitor
+cd swoole-link-monitor
+composer install
+```
 
 ## 配置调整
 
