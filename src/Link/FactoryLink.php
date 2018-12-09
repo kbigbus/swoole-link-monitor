@@ -14,8 +14,7 @@ class FactoryLink
 {
     const LINK_TYPE_MQ    = 'mq';
     const LINK_TYPE_REDIS = 'redis';
-
-    protected $linkSetting = [];
+    const LINK_TYPE_SQL   = 'sql';
 
     protected static $linkObject = [];
 
@@ -34,8 +33,8 @@ class FactoryLink
     /**
      * 获取链路对象
      *
-     * @param array  $linkSetting
-     * @param object $memoryTable
+     * @param array  $linkSetting 链路配置
+     * @param object $memoryTable 共享内存对象
      */
     public function getLinkObject($linkSetting, $memoryTable)
     {
@@ -50,9 +49,15 @@ class FactoryLink
             case self::LINK_TYPE_MQ:
                 self::$linkObject[$linkKey] = new MqLink($linkSetting, $memoryTable, $this->logger);
                 break;
-
+            case self::LINK_TYPE_REDIS:
+                self::$linkObject[$linkKey] = new RedisLink($linkSetting, $memoryTable, $this->logger);
+                break;
+            case self::LINK_TYPE_SQL:
+                self::$linkObject[$linkKey] = new SqlLink($linkSetting, $memoryTable, $this->logger);
+                break;
             default:
                 // code...
+                return false;
                 break;
         }
 

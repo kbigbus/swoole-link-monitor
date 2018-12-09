@@ -9,7 +9,8 @@
         "ext-swoole": ">=1.9.18",
         "guzzlehttp/guzzle": "^6.3",
         "ext-redis": "*",
-        "ext-amqp": "*"
+        "ext-amqp": ">=1.6.0",
+        "catfan/medoo": "^1.6"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8.35 || ^5.7"

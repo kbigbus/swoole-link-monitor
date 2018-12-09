@@ -30,6 +30,4 @@ return [
     'logPath'    => LINK_MONITOR_PATH . '/runtime/', //日志路径
     //链路配置
     'linkList'   => require 'link.php',
-    //告警配置
-    'notice'     => require 'notice.php',
 ];

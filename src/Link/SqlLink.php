@@ -10,8 +10,9 @@ namespace LinkMonitor\Link;
 
 use LinkMonitor\Helper\Logs;
 use LinkMonitor\Helper\Utils;
+use Medoo\Medoo;
 
-class MqLink extends BaseLink
+class SqlLink extends BaseLink
 {
     public $connection              = false; //链接对象成员
     protected static $staticConnect = []; //静态资源
@@ -44,20 +45,20 @@ class MqLink extends BaseLink
         if (isset(self::$staticConnect[$linkSetting['host']]) && null !== self::$staticConnect[$linkSetting['host']]) {
             return self::$staticConnect[$linkSetting['host']];
         }
-        $class = class_exists('\AMQPConnection', false);
+        $class = class_exists('\PDO', false);
         if ($class) {
             try {
-                self::$staticConnect[$linkSetting['host']] = new \AMQPConnection([
-                    'host'           => $linkSetting['host'],
-                    'login'          => $linkSetting['user'],
-                    'password'       => $linkSetting['pass'],
-                    'port'           => $linkSetting['port'],
-                    'vhost'          => $linkSetting['vhost'],
-                    'connect_timeout'=> $linkSetting['timeout'] ?? 1, //设置链接超时 防止由于链接过长导致链路阻塞
+                self::$staticConnect[$linkSetting['host']] = new Medoo([
+                    'database_type' => $linkSetting['adapter'],
+                    'database_name' => $linkSetting['db'],
+                    'server'        => $linkSetting['host'],
+                    'port'          => $linkSetting['port'],
+                    'username'      => $linkSetting['user'],
+                    'password'      => $linkSetting['pass'],
+                    'charset'       => 'utf8',
                 ]);
-                $connectRet = self::$staticConnect[$linkSetting['host']]->connect();
 
-                return $connectRet ? self::$staticConnect[$linkSetting['host']] : null;
+                return self::$staticConnect[$linkSetting['host']];
             } catch (\AMQPConnectionException $ex) {
                 Utils::catchError($this->logger, $ex);
 
@@ -72,7 +73,7 @@ class MqLink extends BaseLink
                 return false;
             }
         } else {
-            $this->logger->errorLog('you need install pecl amqp extension');
+            $this->logger->errorLog('you need install PDO extension');
 
             return false;
         }
@@ -101,26 +102,21 @@ class MqLink extends BaseLink
     {
         $ret = false;
         try {
-            $this->logger->applicationLog('test mq publish0');
+            $this->logger->applicationLog('test mysql insert0');
             if ($this->connection) {
-                $routingKey = $this->linkSetting['connectSetting']['topic'] ?? 'test';
-                $channel    = new \AMQPChannel($this->connection);
-                $exchange   = new \AMQPExchange($channel);
-                $queue      = new \AMQPQueue($channel);
-                $queue->setName($routingKey);
-                $queue->setFlags(AMQP_DURABLE);
-                $queue->declareQueue();
-                $publishRet = $exchange->publish('linkMonitor test message', $routingKey);
-                $outRet     = $queue->get(AMQP_AUTOACK);
-                $this->logger->applicationLog('test mq publish1, publish:' . json_encode($publishRet) . ', out:' . json_encode($outRet));
-                if ((!$publishRet || !$outRet) && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
+                $testTable = $this->linkSetting['connectSetting']['test']['table'] ?? 'test';
+                $testField = $this->linkSetting['connectSetting']['test']['field'] ?? 'id';
+                $insertRet = $this->connection->insert($testTable, [$testField=>1]);
+                $delRet    = $this->connection->delete($testTable, [$testField=>1]);
+                $this->logger->applicationLog('test mysql insert1, insert:' . json_encode($insertRet) . ', del:' . json_encode($delRet));
+                if ((!$insertRet || !$delRet) && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
 
                 return true;
             }
         } catch (Exception $ex) {
-            $this->logger->applicationLog('test mq publish error, errorInfo:' . json_encode($ex));
+            $this->logger->applicationLog('test mysql insert error, errorInfo:' . json_encode($ex));
         }
 
         return $ret;

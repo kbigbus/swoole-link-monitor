@@ -11,7 +11,7 @@ namespace LinkMonitor\Link;
 use LinkMonitor\Helper\Logs;
 use LinkMonitor\Helper\Utils;
 
-class MqLink extends BaseLink
+class RedisLink extends BaseLink
 {
     public $connection              = false; //链接对象成员
     protected static $staticConnect = []; //静态资源
@@ -44,20 +44,18 @@ class MqLink extends BaseLink
         if (isset(self::$staticConnect[$linkSetting['host']]) && null !== self::$staticConnect[$linkSetting['host']]) {
             return self::$staticConnect[$linkSetting['host']];
         }
-        $class = class_exists('\AMQPConnection', false);
+        $class = class_exists('\Redis', false);
         if ($class) {
             try {
-                self::$staticConnect[$linkSetting['host']] = new \AMQPConnection([
-                    'host'           => $linkSetting['host'],
-                    'login'          => $linkSetting['user'],
-                    'password'       => $linkSetting['pass'],
-                    'port'           => $linkSetting['port'],
-                    'vhost'          => $linkSetting['vhost'],
-                    'connect_timeout'=> $linkSetting['timeout'] ?? 1, //设置链接超时 防止由于链接过长导致链路阻塞
-                ]);
-                $connectRet = self::$staticConnect[$linkSetting['host']]->connect();
+                self::$staticConnect[$linkSetting['host']] = new \Redis();
+                $connectRet                                = self::$staticConnect[$linkSetting['host']]->connect($linkSetting['host'], $linkSetting['port'], $linkSetting['timeout'] ?? 1);
+                //是否验证
+                $authRet = true;
+                if (isset($linkSetting['auth']) && $linkSetting['auth']) {
+                    $authRet = self::$staticConnect[$linkSetting['host']]->auth($linkSetting['auth']);
+                }
 
-                return $connectRet ? self::$staticConnect[$linkSetting['host']] : null;
+                return ($connectRet && $authRet) ? self::$staticConnect[$linkSetting['host']] : null;
             } catch (\AMQPConnectionException $ex) {
                 Utils::catchError($this->logger, $ex);
 
@@ -72,7 +70,7 @@ class MqLink extends BaseLink
                 return false;
             }
         } else {
-            $this->logger->errorLog('you need install pecl amqp extension');
+            $this->logger->errorLog('you need install pecl redis extension');
 
             return false;
         }
@@ -101,26 +99,20 @@ class MqLink extends BaseLink
     {
         $ret = false;
         try {
-            $this->logger->applicationLog('test mq publish0');
+            $this->logger->applicationLog('test redis set0');
             if ($this->connection) {
-                $routingKey = $this->linkSetting['connectSetting']['topic'] ?? 'test';
-                $channel    = new \AMQPChannel($this->connection);
-                $exchange   = new \AMQPExchange($channel);
-                $queue      = new \AMQPQueue($channel);
-                $queue->setName($routingKey);
-                $queue->setFlags(AMQP_DURABLE);
-                $queue->declareQueue();
-                $publishRet = $exchange->publish('linkMonitor test message', $routingKey);
-                $outRet     = $queue->get(AMQP_AUTOACK);
-                $this->logger->applicationLog('test mq publish1, publish:' . json_encode($publishRet) . ', out:' . json_encode($outRet));
-                if ((!$publishRet || !$outRet) && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
+                $testKey = $this->linkSetting['connectSetting']['key'] ?? 'test';
+                $setRet  = $this->connection->set($testKey, 'test redis set');
+                $delRet  = $this->connection->del($testKey);
+                $this->logger->applicationLog('test redis set1, set:' . json_encode($setRet) . ', del:' . json_encode($delRet));
+                if ((!$setRet || !$delRet) && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
 
                 return true;
             }
         } catch (Exception $ex) {
-            $this->logger->applicationLog('test mq publish error, errorInfo:' . json_encode($ex));
+            $this->logger->applicationLog('test redis set error, errorInfo:' . json_encode($ex));
         }
 
         return $ret;

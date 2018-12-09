@@ -5,8 +5,8 @@
 ## 链路支持
 
 > * rabbitmq
-> * mysql  开发ING
-> * redis  开发ING
+> * mysql  
+> * redis  
 > * api    开发ING
 > * ... （待扩展）
 
