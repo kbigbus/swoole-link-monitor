@@ -29,7 +29,7 @@
 * checkList 检查列表  1检查链接  2检查操作
 * noticeType 告警类型 1钉钉提醒 2邮件提醒  `存在则覆盖全局配置`
 * noticeTimes 每多少次出错预警一次
-* connectSetting 链路配置
+* connectSetting 链路链接操作配置
     * rabbitmq 配置
         + host 主机
         + user 账户
