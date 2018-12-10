@@ -2,6 +2,14 @@
 
 基于swoole timer/table/process(worker) 实现链路监控与告警
 
+* 基于swoole独立部署 
+> * timer   定时器
+> * process 多进程队列模式消费监听力啊路
+> * table   内存表记录出错次数与时间
+* 无限扩展链路类型
+* 无限扩展告警类型
+
+
 ## 链路支持
 
 > * rabbitmq
@@ -37,6 +45,7 @@
 git clone https://github.com/kbigbus/swoole-link-monitor
 cd swoole-link-monitor
 composer install
+chmod u+x link-monitor
 ```
 
 ## 配置调整
