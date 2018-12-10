@@ -1,6 +1,6 @@
 # swoole-link-monitor
 
-基于swoole timer/table/woker 实现链路监控与告警
+基于swoole timer/table/process(worker) 实现链路监控与告警
 
 ## 链路支持
 
@@ -18,7 +18,14 @@
 
 ## 架构图
 
-待完善
+![架构图](architecture.png)
+
+## 安装要求
+
+> * php >= 7.0
+> * swoole >= 1.9.18
+> * amqp >= 1.6.0
+> * redis
 
 ## 安装方式
 ```
