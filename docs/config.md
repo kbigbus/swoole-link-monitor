@@ -25,11 +25,11 @@
 
 二维数组。每个数组代表一条链路配置，以下为单条链路的配置说明
 
-> * linkType 链路资源类型 mq/redis/sql/api..
-> * checkList 检查列表  1检查链接  2检查操作
-> * noticeType 告警类型 1钉钉提醒 2邮件提醒  <font color=#964747>存在则覆盖全局配置</font>
-> * noticeTimes 每多少次出错预警一次
-> * connectSetting 链路配置
+* linkType 链路资源类型 mq/redis/sql/api..
+* checkList 检查列表  1检查链接  2检查操作
+* noticeType 告警类型 1钉钉提醒 2邮件提醒  <font color=#964747>存在则覆盖全局配置</font>
+* noticeTimes 每多少次出错预警一次
+* connectSetting 链路配置
     * rabbitmq 配置
         + host 主机
         + user 账户
@@ -56,12 +56,12 @@
             + field 测试字段
         + timeout 链接超时时间 无该配置则默认1s
 
-> * dingdingSetting   钉钉机器人告警配置  <font color=#964747>存在则覆盖全局配置</font>
+* dingdingSetting   钉钉机器人告警配置  <font color=#964747>存在则覆盖全局配置</font>
     * access_token 钉钉机器人对应access_token
     * atMobiles @具体人的手机号
     * isAtAll 是否@所有人 
 
-> * emailSetting 邮件告警配置 <font color=#964747>存在则覆盖全局配置</font>
+* emailSetting 邮件告警配置 <font color=#964747>存在则覆盖全局配置</font>
     * smtp 邮件服务器配置
         + smtpserver 邮件服务器地址
         + smtpuser 邮件服务器账号
