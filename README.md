@@ -18,7 +18,12 @@
 
 ## 架构图
 
-![架构图](architecture.png)
+![架构图](docs\images\architecture.png)
+
+## 告警示例图
+
+![钉钉告警](docs\images\dingding_notice.jpg)
+![邮件告警](docs\images\email_notice.png)
 
 ## 安装要求
 
