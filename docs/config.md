@@ -6,10 +6,9 @@
 > * workerNum  检查的子进程数量
 > * noticeType 告警类型 1钉钉提醒 2邮件提醒
 > * dingdingSetting   钉钉机器人告警配置
-
-    * access_token 钉钉机器人对应access_token
-    * atMobiles @具体人的手机号
-    * isAtAll 是否@所有人 
+    + access_token 钉钉机器人对应access_token
+    + atMobiles @具体人的手机号
+    + isAtAll 是否@所有人 
 
 > * emailSetting 邮件告警配置
     * smtp 邮件服务器配置
