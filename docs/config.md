@@ -20,6 +20,7 @@
 > * linkList [链路配置](https://github.com/kbigbus/swoole-link-monitor/blob/master/config.md#%E9%93%BE%E8%B7%AF%E9%85%8D%E7%BD%AE)
 
 
+
 # 链路配置
 
 二维数组。每个数组代表一条链路配置，以下为单条链路的配置说明
@@ -44,16 +45,16 @@
         + key 测试的key值
         + timeout 链接超时时间 无该配置则默认1s
     * sql 配置
-		+ adapter 数据库类型  mysql/pgsql/sybase/oracle/mssql/sqlite
-		+ host 主机
-		+ port 端口
-		+ user 账号
-		+ pass 密码
-		+ db 数据库
-		+ test 测试表与字段配置
-			+ table 测试表
-			+ field 测试字段
-		+ timeout 链接超时时间 无该配置则默认1s
+        + adapter 数据库类型  mysql/pgsql/sybase/oracle/mssql/sqlite
+        + host 主机
+        + port 端口
+        + user 账号
+        + pass 密码
+        + db 数据库
+        + test 测试表与字段配置
+            + table 测试表
+            + field 测试字段
+        + timeout 链接超时时间 无该配置则默认1s
 
 > * dingdingSetting   钉钉机器人告警配置  <font color=#964747>存在则覆盖全局配置</font>
     * access_token 钉钉机器人对应access_token
