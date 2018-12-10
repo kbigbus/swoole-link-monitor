@@ -2,22 +2,22 @@
 
 一维数组。包括轮询时间、子进程数、告警配置等全局设置
 
-> * tickerTime 主进程定时轮询检查时间 每多少秒检查一次
-> * workerNum  检查的子进程数量
-> * noticeType 告警类型 1钉钉提醒 2邮件提醒
-> * dingdingSetting   钉钉机器人告警配置
+* tickerTime 主进程定时轮询检查时间 每多少秒检查一次
+* workerNum  检查的子进程数量
+* noticeType 告警类型 1钉钉提醒 2邮件提醒
+* dingdingSetting   钉钉机器人告警配置
     + access_token 钉钉机器人对应access_token
     + atMobiles @具体人的手机号
     + isAtAll 是否@所有人 
 
-> * emailSetting 邮件告警配置
+* emailSetting 邮件告警配置
     * smtp 邮件服务器配置
         + smtpserver 邮件服务器地址
         + smtpuser 邮件服务器账号
         + smtppass 邮件服务器密码
     * mailto 接收告警的邮箱 多个以逗号隔开
-> * logPath 日志路径
-> * linkList [链路配置](https://github.com/kbigbus/swoole-link-monitor/blob/master/docs/config.md#%E9%93%BE%E8%B7%AF%E9%85%8D%E7%BD%AE)
+* logPath 日志路径
+* linkList [链路配置](https://github.com/kbigbus/swoole-link-monitor/blob/master/docs/config.md#%E9%93%BE%E8%B7%AF%E9%85%8D%E7%BD%AE)
 
 
 
