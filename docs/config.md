@@ -56,12 +56,12 @@
             + field 测试字段
         + timeout 链接超时时间 无该配置则默认1s
 
-* dingdingSetting   钉钉机器人告警配置  <font color=#964747>存在则覆盖全局配置</font>
+* dingdingSetting   钉钉机器人告警配置  `存在则覆盖全局配置`
     * access_token 钉钉机器人对应access_token
     * atMobiles @具体人的手机号
     * isAtAll 是否@所有人 
 
-* emailSetting 邮件告警配置 <font color=#964747>存在则覆盖全局配置</font>
+* emailSetting 邮件告警配置 `存在则覆盖全局配置`
     * smtp 邮件服务器配置
         + smtpserver 邮件服务器地址
         + smtpuser 邮件服务器账号
