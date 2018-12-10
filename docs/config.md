@@ -27,7 +27,7 @@
 
 * linkType 链路资源类型 mq/redis/sql/api..
 * checkList 检查列表  1检查链接  2检查操作
-* noticeType 告警类型 1钉钉提醒 2邮件提醒  <font color=#964747>存在则覆盖全局配置</font>
+* noticeType 告警类型 1钉钉提醒 2邮件提醒  <font color='#964747'>存在则覆盖全局配置</font>
 * noticeTimes 每多少次出错预警一次
 * connectSetting 链路配置
     * rabbitmq 配置
