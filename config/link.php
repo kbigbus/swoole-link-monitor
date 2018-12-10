@@ -11,7 +11,7 @@ return [
     [
         'linkType'       => 'mq', //链路资源类型
         'checkList'      => [1, 2], //检查列表 1检查链接  2检查操作
-        'noticeType'     => 1, //通知类型 1钉钉提醒 2邮件提醒 0全部提醒
+        'noticeType'     => 1, //通知类型 1钉钉提醒 2邮件提醒
         'noticeTimes'    => 5, //每多少次出错预警一次
         'connectSetting' => [
             'host'    => '192.168.9.24',
@@ -41,7 +41,7 @@ return [
     [
         'linkType'       => 'redis', //链路资源类型
         'checkList'      => [1, 2], //检查列表 1检查链接  2检查操作
-        'noticeType'     => 1, //通知类型 1钉钉提醒 2邮件提醒 0全部提醒
+        'noticeType'     => 1, //通知类型 1钉钉提醒 2邮件提醒
         'noticeTimes'    => 5, //每多少次出错预警一次
         'connectSetting' => [
             'host' => '192.168.10.6',
@@ -54,7 +54,7 @@ return [
     [
         'linkType'       => 'sql', //链路资源类型
         'checkList'      => [1, 2], //检查列表 1检查链接  2检查操作
-        'noticeType'     => 1, //通知类型 1钉钉提醒 2邮件提醒 0全部提醒
+        'noticeType'     => 1, //通知类型 1钉钉提醒 2邮件提醒
         'noticeTimes'    => 5, //每多少次出错预警一次
         'connectSetting' => [
             'adapter'  => 'mysql', //数据库类型  mysql/pgsql/sybase/oracle/mssql/sqlite

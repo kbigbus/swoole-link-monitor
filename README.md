@@ -50,7 +50,7 @@ chmod u+x link-monitor
 
 ## 配置调整
 
-参见 config.md(待完善)
+参见 [config.md](docs/config.md)
 
 ## 执行方式
 
