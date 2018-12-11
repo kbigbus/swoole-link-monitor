@@ -47,6 +47,11 @@ class Main
     public function start()
     {
         try {
+            //检查是否已经存在主进程
+            if (file_exists($this->masterPidFile)) {
+                echo 'link-monitor is running' . PHP_EOL;
+                exit;
+            }
             //监听信号
             $this->registerSignalListener();
             //添加时间监听
