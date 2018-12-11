@@ -13,5 +13,5 @@ date_default_timezone_set('Asia/Shanghai');
 require LINK_MONITOR_PATH . '/vendor/autoload.php';
 $config = require_once LINK_MONITOR_PATH . '/config/config.php';
 
-$main = new LinkMonitor\Monitor\Main($config);
-$main->start();
+$console = new LinkMonitor\Console($config);
+$console->run($argv);

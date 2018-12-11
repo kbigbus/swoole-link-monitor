@@ -26,7 +26,9 @@ return [
         'mailto' => 'xxx', //接收告警的邮箱 多个以逗号隔开
     ],
 
-    'logPath'    => LINK_MONITOR_PATH . '/runtime/', //日志路径
+    'logPath'     => LINK_MONITOR_PATH . '/runtime/', //日志路径
+    'pidPath'     => LINK_MONITOR_PATH . '/runtime/', //进程ID路径
+    'processName' => 'swoole-link-monitor', //进程名称
     //链路配置
-    'linkList'   => require 'link.php',
+    'linkList' => require 'link.php',
 ];
