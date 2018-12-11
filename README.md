@@ -55,4 +55,5 @@ chmod u+x link-monitor
 ## 执行方式
 
 > php link-monitor [start|stop|restart|help]
+
 > ps -ef|grep swoole-link-monitor //查看进程情况
