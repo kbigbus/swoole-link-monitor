@@ -17,6 +17,8 @@
         + smtppass 邮件服务器密码
     * mailto 接收告警的邮箱 多个以逗号隔开
 * logPath 日志路径
+* pidPath 保存进程ID的文件路径
+* processName 进程名称 默认 swoole-link-monitor
 * linkList [链路配置](https://github.com/kbigbus/swoole-link-monitor/blob/master/docs/config.md#%E9%93%BE%E8%B7%AF%E9%85%8D%E7%BD%AE)
 
 

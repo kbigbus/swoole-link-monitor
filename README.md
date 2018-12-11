@@ -40,6 +40,10 @@
 > * amqp >= 1.6.0
 > * redis
 
+## 配置调整
+
+参见 [config.md](docs/config.md)
+
 ## 安装方式
 ```
 git clone https://github.com/kbigbus/swoole-link-monitor
@@ -48,10 +52,7 @@ composer install
 chmod u+x link-monitor
 ```
 
-## 配置调整
-
-参见 [config.md](docs/config.md)
-
 ## 执行方式
 
-> php link-monitor
+> php link-monitor [start|stop|restart|help]
+> ps -ef|grep swoole-link-monitor //查看进程情况
