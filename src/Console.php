@@ -54,6 +54,9 @@ class Console
             case 'restart':
                 $this->sendRestartSignal();
             break;
+            case 'status':
+                $this->sendStatusSignal();
+            break;
             case 'help':
             default:
                 $this->echoHelpMsg();
@@ -68,7 +71,6 @@ class Console
     {
         $main = new Main($this->config);
         $main->start();
-        echo 'link-monitor is starting' . PHP_EOL;
     }
 
     /**
@@ -89,23 +91,29 @@ class Console
     }
 
     /**
-     * 操作服务
+     * 查看服务
+     */
+    private function sendStatusSignal()
+    {
+        $this->sendSignal(SIGUSR1);
+    }
+
+    /**
+     * 发送信号操作服务
      *
      * @param mixed $signal
      */
     private function sendSignal($signal = SIGTERM)
     {
         //获取主进程PID
-        $this->logger->applicationLog($signal . (SIGUSR1 == $signal) ? ' smooth to exit...' : ' force to exit...');
-
         if (file_exists($this->masterPidFile)) {
             $pid = file_get_contents($this->masterPidFile);
             //发送信号
-            \swoole_process::kill($pid, $signal);
+            @\swoole_process::kill($pid, $signal);
 
             return;
         }
-        echo 'link-monitor is not running' . PHP_EOL;
+        echo "\rlink-monitor service is not running                       " . PHP_EOL;
     }
 
     /**

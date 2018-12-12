@@ -49,7 +49,7 @@ class Main
         try {
             //检查是否已经存在主进程
             if (file_exists($this->masterPidFile)) {
-                echo 'link-monitor is running' . PHP_EOL;
+                echo "\rlink-monitor service is running                       " . PHP_EOL;
                 exit;
             }
             //监听信号
@@ -59,6 +59,10 @@ class Main
             $this->pid = getmypid();
             $this->saveMasterPid();
             $this->setProcessName();
+
+            $status = file_exists($this->masterPidFile) ? 'success' : 'failed';
+            echo "\rlink-monitor service start " . $status . '                      ' . PHP_EOL;
+            $this->logger->systemLog('start link-monotor service ' . $status);
         } catch (\Exception $ex) {
             Utils::catchError($this->logger, $ex);
         }
@@ -180,6 +184,10 @@ class Main
         \swoole_process::signal(SIGKILL, function ($signo) {
             $this->forceExitService();
         });
+        //查询状态
+        \swoole_process::signal(SIGUSR1, function ($signo) {
+            $this->showStatusInfo();
+        });
     }
 
     /**
@@ -189,6 +197,10 @@ class Main
     {
         $this->forceExitWorkers();
         $this->forceExistMaster();
+        $stopStatus = !file_exists($this->masterPidFile) ? 'success' : 'failed';
+        echo "\rlink-monitor service stop " . $stopStatus . '                       ' . PHP_EOL;
+        $this->logger->systemLog('stop link-monitor service ' . $stopStatus);
+        exit;
     }
 
     /**
@@ -210,7 +222,7 @@ class Main
     {
         @\swoole_process::kill($this->pid);
         @unlink($this->masterPidFile);
-        exit;
+        //exit;
     }
 
     /**
@@ -219,5 +231,13 @@ class Main
     public function saveMasterPid()
     {
         file_put_contents($this->masterPidFile, $this->pid);
+    }
+
+    /**
+     * 显示进程情况.
+     */
+    public function showStatusInfo()
+    {
+        echo "\rlink-monitor service status:" . (file_exists($this->masterPidFile) ? ('active, Master pid:' . file_get_contents($this->masterPidFile)) : 'inactive') . PHP_EOL;
     }
 }

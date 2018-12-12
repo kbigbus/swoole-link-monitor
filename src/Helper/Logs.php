@@ -13,6 +13,7 @@ class Logs
     const LEVEL_TRACE          = 'trace';
     const LEVEL_WARNING        = 'warning';
     const LEVEL_ERROR          = 'error';
+    const LEVEL_SYSTEM         = 'system';
     const LEVEL_INFO           = 'info';
     const LEVEL_PROFILE        = 'profile';
     const MAX_LOGS             = 10000;
@@ -101,6 +102,17 @@ class Logs
     public function applicationLog($message, $flush = true)
     {
         $this->log($message, self::LEVEL_INFO, '', $flush);
+    }
+
+    /**
+     * 写入日志抽离  系统日志.
+     *
+     * @param string $message
+     * @param bool   $flush
+     */
+    public function systemLog($message, $flush = true)
+    {
+        $this->log($message, self::LEVEL_INFO, self::LEVEL_SYSTEM, $flush);
     }
 
     /**
