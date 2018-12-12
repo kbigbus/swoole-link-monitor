@@ -111,7 +111,7 @@ class RedisLink extends BaseLink
 
                 return true;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->logger->applicationLog('test redis set error, errorInfo:' . json_encode($ex));
         }
 

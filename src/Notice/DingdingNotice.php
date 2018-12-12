@@ -71,7 +71,7 @@ class DingdingNotice extends BaseNotice
             $client   = new \GuzzleHttp\Client();
             $res      = $client->request('POST', $apiUrl, ['json' => $message, 'timeout' => 5]);
             $httpCode = $res->getStatusCode();
-            $body     = $res->getBody();
+            $body     = json_decode($res->getBody()->getContents(), true);
         } catch (\Throwable $e) {
             Utils::catchError($this->logger, $e);
             $body = ['errcode'=>Errors::DINGDING_SEND_RETURN_ERROR_CODE, 'errmsg'=>$e->getMessage()];

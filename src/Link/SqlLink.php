@@ -104,18 +104,23 @@ class SqlLink extends BaseLink
         try {
             $this->logger->applicationLog('test mysql insert0');
             if ($this->connection) {
-                $testTable = $this->linkSetting['connectSetting']['test']['table'] ?? 'test';
-                $testField = $this->linkSetting['connectSetting']['test']['field'] ?? 'id';
-                $insertRet = $this->connection->insert($testTable, [$testField=>1]);
-                $delRet    = $this->connection->delete($testTable, [$testField=>1]);
-                $this->logger->applicationLog('test mysql insert1, insert:' . json_encode($insertRet) . ', del:' . json_encode($delRet));
-                if ((!$insertRet || !$delRet) && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
+                $testTable   = $this->linkSetting['connectSetting']['test']['table'] ?? 'test';
+                $testField   = $this->linkSetting['connectSetting']['test']['field'] ?? 'id';
+                $insertRet   = $this->connection->insert($testTable, [$testField=>1]);
+                $delRet      = $this->connection->delete($testTable, [$testField=>1]);
+                $errorInfo   = $this->connection->error();
+                $handleError = false; //默认操作无误
+                if ($errorInfo && isset($errorInfo[0]) && $errorInfo[0] && isset($errorInfo[1]) && $errorInfo[1]) {
+                    $handleError = true;
+                }
+                $this->logger->applicationLog('test mysql insert1, insert:' . json_encode($insertRet) . ', del:' . json_encode($delRet) . ', errorInfo:' . json_encode($errorInfo));
+                if ($handleError && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
 
                 return true;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->logger->applicationLog('test mysql insert error, errorInfo:' . json_encode($ex));
         }
 

@@ -119,7 +119,7 @@ class MqLink extends BaseLink
 
                 return true;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->logger->applicationLog('test mq publish error, errorInfo:' . json_encode($ex));
         }
 
