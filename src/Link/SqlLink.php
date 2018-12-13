@@ -34,7 +34,7 @@ class SqlLink extends BaseLink
 
             return false;
         }
-
+        $this->logFix     = $this->linkSetting['connectSetting']['host'] . ':' . $this->linkSetting['connectSetting']['port'];
         $this->connection = $this->getConnection();
     }
 
@@ -89,6 +89,7 @@ class SqlLink extends BaseLink
         if (!$this->connection && $this->setNoticeMsg()) {
             return false;
         }
+        $this->logger->applicationLog($this->logFix . ' test sql connection success');
 
         return true;
     }
@@ -101,9 +102,8 @@ class SqlLink extends BaseLink
     public function checkOperation(): bool
     {
         $ret    = false;
-        $logFix = $this->linkSetting['connectSetting']['host'] . ':' . $this->linkSetting['connectSetting']['port'];
         try {
-            $this->logger->applicationLog($logFix . ' test mysql insert0');
+            $this->logger->applicationLog($this->logFix . ' test sql insert0');
             if ($this->connection) {
                 $testTable   = $this->linkSetting['connectSetting']['test']['table'] ?? 'test';
                 $testField   = $this->linkSetting['connectSetting']['test']['field'] ?? 'id';
@@ -114,7 +114,7 @@ class SqlLink extends BaseLink
                 if ($errorInfo && isset($errorInfo[0]) && $errorInfo[0] && isset($errorInfo[1]) && $errorInfo[1]) {
                     $handleError = true;
                 }
-                $this->logger->applicationLog($logFix . ' test mysql insert1, insert:' . json_encode($insertRet) . ', del:' . json_encode($delRet) . ', errorInfo:' . json_encode($errorInfo));
+                $this->logger->applicationLog($this->logFix . ' test sql insert1, insert:' . json_encode($insertRet) . ', del:' . json_encode($delRet) . ', errorInfo:' . json_encode($errorInfo));
                 if ($handleError && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
@@ -122,7 +122,7 @@ class SqlLink extends BaseLink
                 return true;
             }
         } catch (\Exception $ex) {
-            $this->logger->applicationLog($logFix . ' test mysql insert error, errorInfo:' . json_encode($ex));
+            $this->logger->applicationLog($this->logFix . ' test sql insert error, errorInfo:' . json_encode($ex));
         }
 
         return $ret;

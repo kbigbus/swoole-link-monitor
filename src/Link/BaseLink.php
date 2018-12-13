@@ -18,6 +18,7 @@ class BaseLink
 
     public $memoryTable    = null;
     public $noticeMsg      = ''; //检查链路失败的告警信息
+    public $logFix         = ''; //应用日志前缀
 
     protected $logger      = [];
     protected $linkSetting = [];
