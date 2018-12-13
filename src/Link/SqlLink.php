@@ -100,9 +100,10 @@ class SqlLink extends BaseLink
      */
     public function checkOperation(): bool
     {
-        $ret = false;
+        $ret    = false;
+        $logFix = $this->linkSetting['connectSetting']['host'] . ':' . $this->linkSetting['connectSetting']['port'];
         try {
-            $this->logger->applicationLog('test mysql insert0');
+            $this->logger->applicationLog($logFix . ' test mysql insert0');
             if ($this->connection) {
                 $testTable   = $this->linkSetting['connectSetting']['test']['table'] ?? 'test';
                 $testField   = $this->linkSetting['connectSetting']['test']['field'] ?? 'id';
@@ -113,7 +114,7 @@ class SqlLink extends BaseLink
                 if ($errorInfo && isset($errorInfo[0]) && $errorInfo[0] && isset($errorInfo[1]) && $errorInfo[1]) {
                     $handleError = true;
                 }
-                $this->logger->applicationLog('test mysql insert1, insert:' . json_encode($insertRet) . ', del:' . json_encode($delRet) . ', errorInfo:' . json_encode($errorInfo));
+                $this->logger->applicationLog($logFix . ' test mysql insert1, insert:' . json_encode($insertRet) . ', del:' . json_encode($delRet) . ', errorInfo:' . json_encode($errorInfo));
                 if ($handleError && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
@@ -121,7 +122,7 @@ class SqlLink extends BaseLink
                 return true;
             }
         } catch (\Exception $ex) {
-            $this->logger->applicationLog('test mysql insert error, errorInfo:' . json_encode($ex));
+            $this->logger->applicationLog($logFix . ' test mysql insert error, errorInfo:' . json_encode($ex));
         }
 
         return $ret;

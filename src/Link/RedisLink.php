@@ -97,14 +97,15 @@ class RedisLink extends BaseLink
      */
     public function checkOperation(): bool
     {
-        $ret = false;
+        $ret    = false;
+        $logFix = $this->linkSetting['connectSetting']['host'] . ':' . $this->linkSetting['connectSetting']['port'];
         try {
-            $this->logger->applicationLog('test redis set0');
+            $this->logger->applicationLog($logFix . ' test redis set0');
             if ($this->connection) {
                 $testKey = $this->linkSetting['connectSetting']['key'] ?? 'test';
                 $setRet  = $this->connection->set($testKey, 'test redis set');
                 $delRet  = $this->connection->del($testKey);
-                $this->logger->applicationLog('test redis set1, set:' . json_encode($setRet) . ', del:' . json_encode($delRet));
+                $this->logger->applicationLog($logFix . ' test redis set1, set:' . json_encode($setRet) . ', del:' . json_encode($delRet));
                 if ((!$setRet || !$delRet) && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
@@ -112,7 +113,7 @@ class RedisLink extends BaseLink
                 return true;
             }
         } catch (\Exception $ex) {
-            $this->logger->applicationLog('test redis set error, errorInfo:' . json_encode($ex));
+            $this->logger->applicationLog($logFix . ' test redis set error, errorInfo:' . json_encode($ex));
         }
 
         return $ret;

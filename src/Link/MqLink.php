@@ -99,9 +99,10 @@ class MqLink extends BaseLink
      */
     public function checkOperation(): bool
     {
-        $ret = false;
+        $ret    = false;
+        $logFix = $this->linkSetting['connectSetting']['host'] . ':' . $this->linkSetting['connectSetting']['port'];
         try {
-            $this->logger->applicationLog('test mq publish0');
+            $this->logger->applicationLog($logFix . ' test mq publish0');
             if ($this->connection) {
                 $routingKey = $this->linkSetting['connectSetting']['topic'] ?? 'test';
                 $channel    = new \AMQPChannel($this->connection);
@@ -112,7 +113,7 @@ class MqLink extends BaseLink
                 $queue->declareQueue();
                 $publishRet = $exchange->publish('linkMonitor test message', $routingKey);
                 $outRet     = $queue->get(AMQP_AUTOACK);
-                $this->logger->applicationLog('test mq publish1, publish:' . json_encode($publishRet) . ', out:' . json_encode($outRet));
+                $this->logger->applicationLog($logFix . ' test mq publish1, publish:' . json_encode($publishRet) . ', out:' . json_encode($outRet));
                 if ((!$publishRet || !$outRet) && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
@@ -120,7 +121,7 @@ class MqLink extends BaseLink
                 return true;
             }
         } catch (\Exception $ex) {
-            $this->logger->applicationLog('test mq publish error, errorInfo:' . json_encode($ex));
+            $this->logger->applicationLog($logFix . ' test mq publish error, errorInfo:' . json_encode($ex));
         }
 
         return $ret;
