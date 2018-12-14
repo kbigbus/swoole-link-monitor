@@ -59,19 +59,23 @@ class MqLink extends BaseLink
 
                 return $connectRet ? self::$staticConnect[$linkSetting['host']] : null;
             } catch (\AMQPConnectionException $ex) {
+                $this->errorMsg = $ex->getMessage();
                 Utils::catchError($this->logger, $ex);
 
                 return false;
             } catch (\Throwable $ex) {
+                $this->errorMsg = $ex->getMessage();
                 Utils::catchError($this->logger, $ex);
 
                 return false;
             } catch (\Exception $ex) {
+                $this->errorMsg = $ex->getMessage();
                 Utils::catchError($this->logger, $ex);
 
                 return false;
             }
         } else {
+            $this->errorMsg = 'you need install pecl amqp extension';
             $this->logger->errorLog('you need install pecl amqp extension');
 
             return false;
@@ -89,7 +93,7 @@ class MqLink extends BaseLink
             return false;
         }
         $this->logger->applicationLog($this->logFix . ' test mq connection success');
-
+        $this->errorMsg = ''; //重置错误信息
         return true;
     }
 
@@ -117,10 +121,11 @@ class MqLink extends BaseLink
                 if ((!$publishRet || !$outRet) && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
-
+                $this->errorMsg = ''; //重置错误信息
                 return true;
             }
         } catch (\Exception $ex) {
+            $this->errorMsg = $ex->getMessage();
             $this->logger->applicationLog($this->logFix . ' test mq publish error, errorInfo:' . json_encode($ex));
         }
 

@@ -59,20 +59,19 @@ class SqlLink extends BaseLink
                 ]);
 
                 return self::$staticConnect[$linkSetting['host']];
-            } catch (\AMQPConnectionException $ex) {
-                Utils::catchError($this->logger, $ex);
-
-                return false;
             } catch (\Throwable $ex) {
+                $this->errorMsg = $ex->getMessage();
                 Utils::catchError($this->logger, $ex);
 
                 return false;
             } catch (\Exception $ex) {
+                $this->errorMsg = $ex->getMessage();
                 Utils::catchError($this->logger, $ex);
 
                 return false;
             }
         } else {
+            $this->errorMsg = 'you need install PDO extension';
             $this->logger->errorLog('you need install PDO extension');
 
             return false;
@@ -90,7 +89,7 @@ class SqlLink extends BaseLink
             return false;
         }
         $this->logger->applicationLog($this->logFix . ' test sql connection success');
-
+        $this->errorMsg = ''; //重置错误信息
         return true;
     }
 
@@ -112,16 +111,19 @@ class SqlLink extends BaseLink
                 $errorInfo   = $this->connection->error();
                 $handleError = false; //默认操作无误
                 if ($errorInfo && isset($errorInfo[0]) && $errorInfo[0] && isset($errorInfo[1]) && $errorInfo[1]) {
-                    $handleError = true;
+                    $this->errorMsg = $errorInfo[2];
+                    $handleError    = true;
                 }
                 $this->logger->applicationLog($this->logFix . ' test sql insert1, insert:' . json_encode($insertRet) . ', del:' . json_encode($delRet) . ', errorInfo:' . json_encode($errorInfo));
                 if ($handleError && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
+                $this->errorMsg = ''; //重置错误信息
 
                 return true;
             }
         } catch (\Exception $ex) {
+            $this->errorMsg = $ex->getMessage();
             $this->logger->applicationLog($this->logFix . ' test sql insert error, errorInfo:' . json_encode($ex));
         }
 

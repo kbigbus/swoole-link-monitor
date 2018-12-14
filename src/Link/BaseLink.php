@@ -18,6 +18,7 @@ class BaseLink
 
     public $memoryTable    = null;
     public $noticeMsg      = ''; //检查链路失败的告警信息
+    public $errorMsg       = ''; //检查链路失败的错误信息
     public $logFix         = ''; //应用日志前缀
 
     protected $logger      = [];
@@ -97,7 +98,10 @@ class BaseLink
         . '类型：' . $this->linkSetting['linkType'] . PHP_EOL
         . '主机：' . $linkSetting['host'] . PHP_EOL
         . '端口：' . $linkSetting['port'] . PHP_EOL;
-        $this->noticeMsg .= $errorStr;
+        $this->noticeMsg .= $errorStr . PHP_EOL;
+        if ($this->errorMsg) {
+            $this->noticeMsg .= '错误信息：' . $this->errorMsg . PHP_EOL;
+        }
 
         return true;
     }

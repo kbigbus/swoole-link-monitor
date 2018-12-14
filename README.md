@@ -30,7 +30,7 @@
 
 ## 告警示例图
 
-![钉钉告警](docs/images/dingding_notice.jpg)
+![钉钉告警](docs/images/dingding_notice.png)
 ![邮件告警](docs/images/email_notice.png)
 
 ## 安装要求

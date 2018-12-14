@@ -56,20 +56,19 @@ class RedisLink extends BaseLink
                 }
 
                 return ($connectRet && $authRet) ? self::$staticConnect[$linkSetting['host']] : null;
-            } catch (\AMQPConnectionException $ex) {
-                Utils::catchError($this->logger, $ex);
-
-                return false;
             } catch (\Throwable $ex) {
+                $this->errorMsg = $ex->getMessage();
                 Utils::catchError($this->logger, $ex);
 
                 return false;
             } catch (\Exception $ex) {
+                $this->errorMsg = $ex->getMessage();
                 Utils::catchError($this->logger, $ex);
 
                 return false;
             }
         } else {
+            $this->errorMsg = 'you need install pecl redis extension';
             $this->logger->errorLog('you need install pecl redis extension');
 
             return false;
@@ -87,7 +86,7 @@ class RedisLink extends BaseLink
             return false;
         }
         $this->logger->applicationLog($this->logFix . ' test redis connection success');
-
+        $this->errorMsg = ''; //重置错误信息
         return true;
     }
 
@@ -109,10 +108,12 @@ class RedisLink extends BaseLink
                 if ((!$setRet || !$delRet) && $this->setNoticeMsg(self::CHECK_TYPE_OPERATION)) {
                     return false;
                 }
+                $this->errorMsg = ''; //重置错误信息
 
                 return true;
             }
         } catch (\Exception $ex) {
+            $this->errorMsg = $ex->getMessage();
             $this->logger->applicationLog($this->logFix . ' test redis set error, errorInfo:' . json_encode($ex));
         }
 
