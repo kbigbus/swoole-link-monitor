@@ -9,6 +9,7 @@
 namespace LinkMonitor\Notice;
 
 use LinkMonitor\Helper\Logs;
+use LinkMonitor\Helper\Utils;
 
 class FactoryNotice
 {
@@ -57,35 +58,41 @@ class FactoryNotice
             $this->emailSetting = $noticeConfig['emailSetting'];
         }
         $retObj = false;
-        switch ($this->noticeType) {
-            case self::NOTICE_TYPE_DINGDING://钉钉提醒
-                if ($this->dingdingSetting) {
-                    //调用钉钉接口推送
-                    $retObj = $this->getInstanceObj();
-                    if ($retObj) {
-                        $retObj->setToken($this->dingdingSetting);
+        try {
+            switch ($this->noticeType) {
+                case self::NOTICE_TYPE_DINGDING://钉钉提醒
+                    if ($this->dingdingSetting) {
+                        //调用钉钉接口推送
+                        $retObj = $this->getInstanceObj();
+                        if ($retObj) {
+                            $retObj->setToken($this->dingdingSetting);
+                        }
+                    } else {
+                        //不存在配置
+                        $this->logger->errorLog('has no dingding setting, noticeConfig:' . json_encode($noticeConfig));
                     }
-                } else {
-                    //不存在配置
-                    $this->logger->errorLog('has no dingding setting, noticeConfig:' . json_encode($noticeConfig));
-                }
-            break;
-            case self::NOTICE_TYPE_EMAIL://邮件提醒
-                if ($this->emailSetting) {
-                    //调用邮件推送
-                    $retObj = $this->getInstanceObj();
-                    if ($retObj) {
-                        $retObj->setToken($this->emailSetting);
+                break;
+                case self::NOTICE_TYPE_EMAIL://邮件提醒
+                    if ($this->emailSetting) {
+                        //调用邮件推送
+                        $retObj = $this->getInstanceObj();
+                        if ($retObj) {
+                            $retObj->setToken($this->emailSetting);
+                        }
+                    } else {
+                        //不存在配置
+                        $this->logger->errorLog('has no email setting, noticeConfig:' . json_encode($noticeConfig));
                     }
-                } else {
-                    //不存在配置
-                    $this->logger->errorLog('has no email setting, noticeConfig:' . json_encode($noticeConfig));
-                }
 
-            break;
+                break;
+            }
+
+            return $retObj;
+        } catch (\Exception $ex) {
+            Utils::catchError($this->logger, $ex);
+
+            return false;
         }
-
-        return $retObj;
     }
 
     //获取单例对象

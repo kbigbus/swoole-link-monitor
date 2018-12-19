@@ -74,18 +74,18 @@ class Main
         if ((int) $this->config['tickerTime'] <= 0 || !$this->config['linkList'] || !$this->config['workerNum']) {
             throw new \Exception(Errors::SETTING_ERROR_MESSAGE, Errors::SETTING_ERROR_CODE);
         }
+        //内存方式记录出错次数
+        $swooleTable = new MemoryTable(count($this->config['linkList']));
         try {
-            //内存方式记录出错次数
-            $swooleTable = new MemoryTable(count($this->config['linkList']));
-            \swoole_timer_tick($this->config['tickerTime'] * 1000, function () use ($swooleTable) {
+            $factoryLink = new FactoryLink();
+            $factoryLink->getConfig($this->config);
+            $factoryNotice = new FactoryNotice();
+            $factoryNotice->getConfig($this->config);
+            \swoole_timer_tick($this->config['tickerTime'] * 1000, function () use ($factoryLink, $factoryNotice, $swooleTable) {
                 $customMsgKey = 1;
                 $mod          = 2 | \swoole_process::IPC_NOWAIT; //这里设置消息队列为非阻塞模式
 
                 $workers = [];
-                $factoryLink = new FactoryLink();
-                $factoryLink->getConfig($this->config);
-                $factoryNotice = new FactoryNotice();
-                $factoryNotice->getConfig($this->config);
                 for ($i=0; $i < $this->config['workerNum']; $i++) {
                     //开启子进程检查链路
                     $process = new \swoole_process(function ($worker) use ($factoryLink, $factoryNotice, $swooleTable) {
@@ -127,9 +127,9 @@ class Main
                                 $this->logger->errorLog('get link object failed,linkSetting:' . json_encode($linkSetting));
                             }
                         }
-                        if (false !== $workerIndex) {
-                            unset($this->workers[$workerIndex]);
-                        }
+                        // if (false !== $workerIndex) {
+                        //     unset($this->workers[$workerIndex]);
+                        // }
                         $worker->exit(0);
                     }, false, false);
                     $process->useQueue($customMsgKey, $mod);
@@ -149,10 +149,12 @@ class Main
                 }
                 //执行完成  删除队列
                 foreach ($this->workers as $worker) {
-                    \swoole_process::wait();
+                    @\swoole_process::wait();
                 }
             });
         } catch (\Exception $ex) {
+            //报错删除分配内存
+            $swooleTable->flushAll();
             Utils::catchError($this->logger, $ex);
         }
     }

@@ -9,6 +9,7 @@
 namespace LinkMonitor\Link;
 
 use LinkMonitor\Helper\Logs;
+use LinkMonitor\Helper\Utils;
 
 class FactoryLink
 {
@@ -45,22 +46,28 @@ class FactoryLink
         if (isset(self::$linkObject[$linkKey]) && self::$linkObject[$linkKey]) {
             return self::$linkObject[$linkKey];
         }
-        switch ($linkSetting['linkType']) {
-            case self::LINK_TYPE_MQ:
-                self::$linkObject[$linkKey] = new MqLink($linkSetting, $memoryTable, $this->logger);
-                break;
-            case self::LINK_TYPE_REDIS:
-                self::$linkObject[$linkKey] = new RedisLink($linkSetting, $memoryTable, $this->logger);
-                break;
-            case self::LINK_TYPE_SQL:
-                self::$linkObject[$linkKey] = new SqlLink($linkSetting, $memoryTable, $this->logger);
-                break;
-            default:
-                // code...
-                return false;
-                break;
-        }
+        try {
+            switch ($linkSetting['linkType']) {
+                case self::LINK_TYPE_MQ:
+                    self::$linkObject[$linkKey] = new MqLink($linkSetting, $memoryTable, $this->logger);
+                    break;
+                case self::LINK_TYPE_REDIS:
+                    self::$linkObject[$linkKey] = new RedisLink($linkSetting, $memoryTable, $this->logger);
+                    break;
+                case self::LINK_TYPE_SQL:
+                    self::$linkObject[$linkKey] = new SqlLink($linkSetting, $memoryTable, $this->logger);
+                    break;
+                default:
+                    // code...
+                    return false;
+                    break;
+            }
 
-        return self::$linkObject[$linkKey];
+            return self::$linkObject[$linkKey];
+        } catch (\Exception $ex) {
+            Utils::catchError($this->logger, $ex);
+
+            return false;
+        }
     }
 }

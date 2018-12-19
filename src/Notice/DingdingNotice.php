@@ -62,6 +62,7 @@ class DingdingNotice extends BaseNotice
         if (!$this->token || !$this->contentType || !$this->content) {
             return ['errcode'=>Errors::DINGDING_SEND_SETTING_ERROR_CODE, 'errmsg'=>Errors::DINGDING_SEND_SETTING_ERROR_MESSAGE];
         }
+        $httpCode = 0;
         try {
             $message = [
                 'msgtype' => $this->contentType,

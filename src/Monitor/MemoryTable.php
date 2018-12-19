@@ -103,4 +103,14 @@ class MemoryTable
     {
         return $this->table->get($linkKey);
     }
+
+    /**
+     * 删除全部key.
+     */
+    public function flushAll()
+    {
+        foreach ($this->table as $key=>$row) {
+            $this->table->del($key);
+        }
+    }
 }
