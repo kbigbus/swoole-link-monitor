@@ -21,7 +21,7 @@ class MemoryTable
     ];
 
     public static $staticTable = null;
-    public $table              = null;
+    private $table             = null;
 
     public function __construct($linkCount = 5)
     {
@@ -112,5 +112,29 @@ class MemoryTable
         foreach ($this->table as $key=>$row) {
             $this->table->del($key);
         }
+    }
+
+    /**
+     * 获取全部key与value.
+     */
+    public function getKeysValues()
+    {
+        $ret = [];
+        foreach ($this->table as $key=>$row) {
+            $ret[$key] = $row;
+        }
+
+        return $ret;
+    }
+
+    /**
+     * 单个key设置所有值
+     *
+     * @param string $linkKey 标记链路唯一key
+     * @param array  $values  对应数据
+     */
+    public function setKeyValues($linkKey, $values)
+    {
+        $this->table->set($linkKey, $values);
     }
 }

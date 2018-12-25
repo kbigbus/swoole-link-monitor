@@ -18,16 +18,18 @@ class Main
 {
     public $logger        = null;
     public $pid           = null; //进程ID
-    public $masterPidFile = '';
+    public $masterPidFile = ''; //主进程id存储文件路径
+    public $errorInfoFile = ''; //错误文件路径
     private $config       = [];
     private $workers      = []; //子进程列表
+    private $memoryTable  = null; //内存表
 
     /**
      * 初始化.
      *
      * @param array $config 配置项
      *                      [
-                           		'tickerTime' => 5;//每5秒循环一次
+                                'tickerTime' => 5;//每5秒循环一次
      *                      ]
      */
     public function __construct($config)
@@ -37,6 +39,7 @@ class Main
         \swoole_process::daemon();
         if (isset($this->config['pidPath']) && !empty($this->config['pidPath'])) {
             $this->masterPidFile = $this->config['pidPath'] . '/master.pid';
+            $this->errorInfoFile = $this->config['pidPath'] . '/errorInfo';
         } else {
             echo 'config pidPath must be set!' . PHP_EOL;
             exit;
@@ -75,20 +78,22 @@ class Main
             throw new \Exception(Errors::SETTING_ERROR_MESSAGE, Errors::SETTING_ERROR_CODE);
         }
         //内存方式记录出错次数
-        $swooleTable = new MemoryTable(count($this->config['linkList']));
+        $this->swooleTable = new MemoryTable(count($this->config['linkList']));
+        //载入出错数据
+        $this->getErrorInfo();
         try {
-            $factoryLink = new FactoryLink();
-            $factoryLink->getConfig($this->config);
-            $factoryNotice = new FactoryNotice();
-            $factoryNotice->getConfig($this->config);
-            \swoole_timer_tick($this->config['tickerTime'] * 1000, function () use ($factoryLink, $factoryNotice, $swooleTable) {
+            \swoole_timer_tick($this->config['tickerTime'] * 1000, function () {
+                $this->workers = [];
+                $factoryLink = new FactoryLink();
+                $factoryLink->getConfig($this->config);
+                $factoryNotice = new FactoryNotice();
+                $factoryNotice->getConfig($this->config);
                 $customMsgKey = 1;
                 $mod          = 2 | \swoole_process::IPC_NOWAIT; //这里设置消息队列为非阻塞模式
 
-                $workers = [];
                 for ($i=0; $i < $this->config['workerNum']; $i++) {
                     //开启子进程检查链路
-                    $process = new \swoole_process(function ($worker) use ($factoryLink, $factoryNotice, $swooleTable) {
+                    $process = new \swoole_process(function ($worker) use ($factoryLink, $factoryNotice) {
                         $this->setProcessName(false);
                         $pid = $worker->pid;
                         $this->logger->log('Worker Start, PID=' . $pid);
@@ -96,7 +101,7 @@ class Main
                         while ($recv = $worker->pop()) {
                             //获取队列内容 获取 链路对象
                             list($linkSetting, $workerIndex) = @json_decode($recv, true);
-                            $linkObject = $factoryLink->getLinkObject($linkSetting, $swooleTable);
+                            $linkObject = $factoryLink->getLinkObject($linkSetting, $this->swooleTable);
                             if ($linkObject) {
                                 $sendNotice = false; //默认不告警
                                 if (!isset($linkSetting['checkList'])) {
@@ -122,10 +127,12 @@ class Main
                                     $noticeObject = $factoryNotice->getNoticeObject($linkSetting);
                                     $noticeObject->setContent($linkObject->noticeMsg);
                                     $noticeObject->send();
+                                    unset($noticeObject);
                                 }
                             } else {
                                 $this->logger->errorLog('get link object failed,linkSetting:' . json_encode($linkSetting));
                             }
+                            unset($linkObject);
                         }
                         // if (false !== $workerIndex) {
                         //     unset($this->workers[$workerIndex]);
@@ -136,6 +143,7 @@ class Main
                     $pid           = $process->start();
                     $this->workers[] = [$pid, $process];
                 }
+
                 //循环取模入队
                 $this->config['linkList'] = array_values($this->config['linkList']);
                 $countWorkers = count($this->workers);
@@ -151,10 +159,15 @@ class Main
                 foreach ($this->workers as $worker) {
                     @\swoole_process::wait();
                 }
+
+                //回收内存
+                $factoryLink = null;
+                $factoryNotice = null;
+                unset($factoryLink, $factoryNotice);
             });
         } catch (\Exception $ex) {
             //报错删除分配内存
-            $swooleTable->flushAll();
+            $this->swooleTable->flushAll();
             Utils::catchError($this->logger, $ex);
         }
     }
@@ -199,6 +212,7 @@ class Main
     {
         $this->forceExitWorkers();
         $this->forceExistMaster();
+        $this->writeErrorInfo(); //写入错误信息
         $stopStatus = !file_exists($this->masterPidFile) ? 'success' : 'failed';
         echo "\rlink-monitor service stop " . $stopStatus . '                       ' . PHP_EOL;
         $this->logger->systemLog('stop link-monitor service ' . $stopStatus);
@@ -241,5 +255,31 @@ class Main
     public function showStatusInfo()
     {
         echo "\rlink-monitor service status:" . (file_exists($this->masterPidFile) ? ('active, Master pid:' . file_get_contents($this->masterPidFile)) : 'inactive') . PHP_EOL;
+    }
+
+    /**
+     * 重启将出错信息写入文件.
+     */
+    public function writeErrorInfo()
+    {
+        $memoryList = $this->swooleTable->getKeysValues();
+        @file_put_contents($this->errorInfoFile, json_encode($memoryList));
+    }
+
+    /**
+     * 启动获取出错信息.
+     */
+    public function getErrorInfo()
+    {
+        //读取文件
+        $errorFile = @file_get_contents($this->errorInfoFile);
+        if ($errorFile) {
+            $errorInfo = @json_decode($errorFile, true);
+            if ($errorInfo) {
+                foreach ($errorInfo as $key=>$value) {
+                    $this->swooleTable->setKeyValues($key, $value);
+                }
+            }
+        }
     }
 }
