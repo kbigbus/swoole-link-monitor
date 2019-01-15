@@ -95,9 +95,13 @@ class BaseLink
         }
         $linkSetting     = $this->linkSetting['connectSetting'];
         $this->noticeMsg = '链路' . (1 == $checkType ? '连接' : '操作') . '异常' . PHP_EOL
-        . '类型：' . $this->linkSetting['linkType'] . PHP_EOL
-        . '主机：' . $linkSetting['host'] . PHP_EOL
-        . '端口：' . $linkSetting['port'] . PHP_EOL;
+        . '类型：' . $this->linkSetting['linkType'] . PHP_EOL;
+        if (isset($linkSetting['alias']) && $linkSetting['alias']) {
+            $this->noticeMsg .= '别名：' . $linkSetting['alias'] . PHP_EOL;
+        } else {
+            $this->noticeMsg .= '主机：' . $linkSetting['host'] . PHP_EOL
+            . '端口：' . $linkSetting['port'] . PHP_EOL;
+        }
         $this->noticeMsg .= $errorStr . PHP_EOL;
         if ($this->errorMsg) {
             $this->noticeMsg .= '错误信息：' . $this->errorMsg . PHP_EOL;

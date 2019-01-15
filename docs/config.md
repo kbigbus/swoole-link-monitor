@@ -33,6 +33,7 @@
 * noticeTimes 每多少次出错预警一次
 * connectSetting 链路链接操作配置
     * rabbitmq 配置
+        + alias 别名 存在该设置则告警不显示主机和端口
         + host 主机
         + user 账户
         + pass 密码
@@ -41,12 +42,14 @@
         + topic 测试队列名称
         + timeout 链接超时时间 无该配置则默认1s
     * redis 配置
+        + alias 别名 存在该设置则告警不显示主机和端口
         + host 主机
         + port 端口
         + auth 认证密码 可为空
         + key 测试的key值
         + timeout 链接超时时间 无该配置则默认1s
     * sql 配置
+        + alias 别名 存在该设置则告警不显示主机和端口
         + adapter 数据库类型  mysql/pgsql/sybase/oracle/mssql/sqlite
         + host 主机
         + port 端口
