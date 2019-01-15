@@ -14,6 +14,7 @@ return [
         'noticeType'     => 1, //通知类型 1钉钉提醒 2邮件提醒
         'noticeTimes'    => 5, //每多少次出错预警一次
         'connectSetting' => [
+            'alias'   => '开发环境消息队列', //别名
             'host'    => '192.168.9.24',
             'user'    => 'mqadmin',
             'pass'    => 'mqadmin',
