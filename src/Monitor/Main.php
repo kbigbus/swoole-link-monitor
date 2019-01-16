@@ -93,7 +93,7 @@ class Main
 
                 for ($i=0; $i < $this->config['workerNum']; $i++) {
                     //开启子进程检查链路
-                    $process = new \swoole_process(function (\swoole_process $worker) use ($factoryLink, $factoryNotice) {
+                    $process = new \swoole_process(function ($worker) use ($factoryLink, $factoryNotice) {
                         $this->setProcessName(false);
                         $pid = $worker->pid;
                         $this->logger->log('Worker Start, PID=' . $pid);
