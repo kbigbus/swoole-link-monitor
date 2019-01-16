@@ -16,6 +16,7 @@ class FactoryLink
     const LINK_TYPE_MQ    = 'mq';
     const LINK_TYPE_REDIS = 'redis';
     const LINK_TYPE_SQL   = 'sql';
+    const LINK_TYPE_FPM   = 'fpm';
 
     protected static $linkObject = [];
 
@@ -56,6 +57,9 @@ class FactoryLink
                     break;
                 case self::LINK_TYPE_SQL:
                     self::$linkObject[$linkKey] = new SqlLink($linkSetting, $memoryTable, $this->logger);
+                    break;
+                case self::LINK_TYPE_FPM:
+                    self::$linkObject[$linkKey] = new FpmLink($linkSetting, $memoryTable, $this->logger);
                     break;
                 default:
                     // code...

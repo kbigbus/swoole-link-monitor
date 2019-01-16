@@ -80,4 +80,21 @@ return [
         'type'      => 'api6', //链路资源类型
         'noticeType'=> '',
     ],
+    [
+        'linkType'       => 'fpm', //链路资源类型
+        'checkList'      => [1, 2], //检查列表 1检查链接  2检查操作
+        'noticeType'     => 1, //通知类型 1钉钉提醒 2邮件提醒
+        'noticeTimes'    => 5, //每多少次出错预警一次
+        'connectSetting' => [
+            'host'    => '127.0.0.1',
+            'port'    => 80,
+            'uri'     => '/status', // PHP-FPM状态页的URI，默认是/status
+            'timeout' => 1, //链路超时时间 默认1s 防止由于链接过长导致链路阻塞
+
+            // PHP-FPM status 变量，忽略就设成0，否则达到或超过设置的值就会告警
+            'listenQueueLimit'        => 1, // listen queue – 请求等待队列，如果这个值不为0，那么要增加FPM的进程数量
+            'maxChildrenReachedLimit' => 1, // max children reached - 达到进程最大数量限制的次数，如果这个数量不为0，那说明你的最大进程数量太小了
+            'slowRequestsLimit'       => 0, // slow requests – 启用了php-fpm slow-log，缓慢请求的数量
+        ],
+    ],
 ];
