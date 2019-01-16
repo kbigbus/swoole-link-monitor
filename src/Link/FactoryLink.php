@@ -58,9 +58,9 @@ class FactoryLink
                 case self::LINK_TYPE_SQL:
                     self::$linkObject[$linkKey] = new SqlLink($linkSetting, $memoryTable, $this->logger);
                     break;
-	            case self::LINK_TYPE_FPM:
-	            	self::$linkObject[$linkKey] = new FpmLink($linkSetting, $memoryTable, $this->logger);
-	            	break;
+                case self::LINK_TYPE_FPM:
+                    self::$linkObject[$linkKey] = new FpmLink($linkSetting, $memoryTable, $this->logger);
+                    break;
                 default:
                     // code...
                     return false;
