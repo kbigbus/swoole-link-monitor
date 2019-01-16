@@ -60,6 +60,14 @@
             + table 测试表
             + field 测试字段
         + timeout 链接超时时间 无该配置则默认1s
+    * PHP-FPM 配置
+        + host 主机
+        + port 端口
+        + uri PHP-FPM状态页的uri，默认是/status
+        + timeout 链路超时时间 默认1s 防止由于链接过长导致链路阻塞
+        + listenQueueLimit 0-忽略，正数-限制，listenQueue表示请求等待队列，如果这个值不为0，那么要增加FPM的进程数量
+        + maxChildrenReachedLimit 0-忽略，正数-限制，maxChildrenReached表示达到进程最大数量限制的次数，如果这个数量不为0，那说明你的最大进程数量太小了
+        + slowRequestsLimit 0-忽略，正数-限制，slowRequests表示启用了php-fpm slow-log后，缓慢请求的数量
 
 * dingdingSetting   钉钉机器人告警配置  `存在则覆盖全局配置`
     * access_token 钉钉机器人对应access_token
