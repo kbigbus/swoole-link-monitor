@@ -8,12 +8,12 @@
 
 return [
     //全局配置
-    'noticeType'      => 0, //通知类型 1钉钉提醒 2邮件提醒
+    'noticeType'      => 1, //通知类型 1钉钉提醒 2邮件提醒
     'tickerTime'      => 3, //每10秒一次轮训
     'workerNum'       => 4, //worker数量
     'dingdingSetting' => [//钉钉提醒配置
-        'access_token' => 'xxx',
-        'atMobiles'    => [],
+        'access_token' => 'd8331d4ae86a8b870bab2e7c5f2a23cae2312c4337602cdf4260b96a514e08ec',
+        'atMobiles'    => ['13570233789'],
         'isAtAll'      => false,
     ],
     'emailSetting'  => [//邮件提醒配置
