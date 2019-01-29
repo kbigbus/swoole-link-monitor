@@ -79,7 +79,7 @@ class Logs
     {
         $pid    = getmypid();
 
-        return @date('Y/m/d H:i:s', $time) . " LOG [$this->logSystem] [$level] [$category] [PID$pid] \n $message \n";
+        return @date('Y/m/d H:i:s', $time) . " LOG [$this->logSystem] [$level] [$category] [PID$pid] $message \n";
     }
 
     /**

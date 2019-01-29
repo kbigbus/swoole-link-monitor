@@ -56,6 +56,9 @@ class SqlLink extends BaseLink
                     'username'      => $linkSetting['user'],
                     'password'      => $linkSetting['pass'],
                     'charset'       => 'utf8',
+                    'option'        => [
+                        \PDO::ATTR_TIMEOUT => $linkSetting['timeout'] ?? 1,
+                    ],
                 ]);
 
                 return self::$staticConnect[$linkSetting['host']];
