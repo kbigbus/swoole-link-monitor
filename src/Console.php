@@ -87,7 +87,7 @@ class Console
     private function sendRestartSignal()
     {
         $this->sendExitSignal();
-        usleep(300);
+        sleep(2);
         $this->sendStartSignal();
     }
 
