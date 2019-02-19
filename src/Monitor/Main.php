@@ -98,6 +98,7 @@ class Main
                         $pid = $worker->pid;
                         $this->logger->log('Worker Start, PID=' . $pid);
                         $workerIndex = false;
+                        sleep(1); //防止父进程还未往消息队列中加入内容直接退出
                         while ($recv = $worker->pop()) {
                             //获取队列内容 获取 链路对象
                             list($linkSetting, $workerIndex) = @json_decode($recv, true);
