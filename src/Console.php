@@ -79,6 +79,7 @@ class Console
     private function sendExitSignal()
     {
         $this->sendSignal(SIGTERM);
+        @unlink($this->masterPidFile);
     }
 
     /**
